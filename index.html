@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CommuniTies</title>
+    <style>html, body { margin: 0; padding: 0; height: 100%; } html { min-width: 1200px; min-height: 600px; background-color: #e5e4e2; }</style>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+    <style>
+        .m-app {
+            height: 100%;
+        }
+        .m-header {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 0 40px;
+            height: 60px;
+            color: #fff;
+            background: #15732a;
+            font-size: 24px;
+            box-sizing: border-box;
+        }
+        .m-header .f-logo {
+            font-weight: bold;
+        }
+        .m-header .f-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .m-main {
+            display: flex;
+            flex-direction: column;
+            padding: 84px 24px 24px;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        .m-form {
+            flex: none;
+            padding: 18px 18px 0;
+            background: #fff;
+            border: solid 0.5px #000;
+            border-radius: 10px;
+        }
+        .m-form .el-select {
+            flex: 1;
+        }
+        .m-result {
+            flex: 1;
+            display: flex;
+            margin-top: 24px;
+        }
+        .m-result .f-left {
+            flex: 1;
+        }
+        .m-result .f-right {
+            flex: none;
+            margin-left: 16px;
+            width: 500px;
+        }
+        .m-result .m-part {
+            display: flex;
+            flex-direction: column;
+        }
+        .m-result .u-title {
+            flex: none;
+            margin-bottom: 16px;
+            text-align: center;
+            text-decoration: underline;
+        }
+        .m-result .m-content {
+            flex: 1;
+        }
+        .m-result .m-content .u-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #fff;
+            border-radius: 10px;
+        }
+        .m-result .m-result-item {
+            margin-bottom: 16px;
+            background: #fff;
+            border-radius: 10px;
+        }
+        .m-result .m-result-item .u-result-name {
+            padding: 16px;
+            border-bottom: solid 0.5px #eee;
+        }
+        .m-result .m-result-item .m-result-data {
+            padding: 16px;
+        }
+        .m-result .m-result-item .m-result-data-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        .m-result .m-result-item .m-result-data-item .u-key {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="m-app">
+        <div class="m-header">
+            <div class="f-logo">CommuniTies</div>
+            <div class="f-center">Content Tracker</div>
+        </div>
+        <div class="m-main">
+            <el-form class="m-form" :model="form" label-width="120px">
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="Content title">
+                            <el-input v-model="form.title" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="Starting point">
+                            <el-select v-model="form.start">
+                                <el-option
+                                    v-for="item in startPoints"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="Dates">
+                            <el-date-picker
+                            v-model="form.dates"
+                            type="daterange"
+                            range-separator="To"
+                            start-placeholder="Start date"
+                            end-placeholder="End date"
+                        />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="Region">
+                            <el-select v-model="form.region">
+                                <el-option
+                                    v-for="item in regions"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="Platforms">
+                            <el-select v-model="form.platforms" multiple>
+                                <el-option
+                                    v-for="item in platforms"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </el-form>
+            <div class="m-result">
+                <div class="m-part f-left">
+                    <div class="u-title">Community Network</div>
+                    <div class="m-content">
+                        <div class="u-image"></div>
+                    </div>
+                </div>
+                <div class="m-part f-right">
+                    <div class="u-title">Community Data</div>
+                    <div class="m-content">
+                        <div
+                            v-for="(result, i) in resultDatas"
+                            class="m-result-item"
+                        >
+                            <div class="u-result-name">{{result.name}}</div>
+                            <div class="m-result-data">
+                                <div class="m-result-data-item">
+                                    <div class="u-key">Demographic</div>
+                                    <div class="u-value">{{displayValue(result.demographic)}}</div>
+                                </div>
+                                <div class="m-result-data-item">
+                                    <div class="u-key">Keywords</div>
+                                    <div class="u-value">{{displayValue(result.keywords)}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="https://unpkg.com/vue@next"></script>
+<script src="https://unpkg.com/element-plus"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js" integrity="sha256-oZEaXgWqxLmr12VzCK9eGOuHIi3XPZ/KsJXXFjtyvZA=" crossorigin="anonymous"></script>
+<script>
+    const App = {
+        data () {
+            return {
+                form: {
+                    title: '',
+                    start: 1,
+                    dates: [],
+                    region: 1,
+                    platforms: []
+                },
+                startPoints: [
+                    { value: 1, label: 'News website - first page' },
+                ],
+                regions: [
+                    { value: 1, label: 'Fenway, Boston' },
+                ],
+                platforms: [
+                    { value: 1, label: 'Google' },
+                    { value: 2, label: 'Facebook' },
+                    { value: 3, label: 'Twitter' },
+                ],
+                resultDatas: []
+            }
+        },
+        methods: {
+            toPercent (value) {
+                return (value * 100 || 0).toFixed(0) + '%'
+            },
+            otherValue (datas) {
+                let other = 1
+                datas.forEach(data => other -= data.value)
+                if (other > 0) {
+                    datas.push({ name: 'other', value: other})
+                }
+            },
+            displayValue (datas)  {
+                return datas.map(data => `${data.name} ${this.toPercent(data.value)}`).join(', ')
+            },
+            submit () {
+                // axios提交请求到后端接口
+                // 模拟数据
+                const res = [
+                    {
+                        name: 'Out of towners',
+                        demographic: [
+                            { name: 'White', value: 0.6 },
+                            { name: 'Brazilian', value: 0.3 }
+                        ],
+                        keywords: [
+                            { name: 'Red Sox fans', value: 0.6 },
+                            { name: 'Dog lovers', value: 0.3 }
+                        ]
+                    },
+                    {
+                        name: 'Boston Business',
+                        demographic: [
+                            { name: 'White', value: 0.6 },
+                            { name: 'Brazilian', value: 0.3 }
+                        ],
+                        keywords: [
+                            { name: 'Red Sox fans', value: 0.6 },
+                            { name: 'Dog lovers', value: 0.3 }
+                        ]
+                    },
+                    {
+                        name: 'Boston Locals',
+                        demographic: [
+                            { name: 'White', value: 0.6 },
+                            { name: 'Brazilian', value: 0.3 }
+                        ],
+                        keywords: [
+                            { name: 'Red Sox fans', value: 0.6 },
+                            { name: 'Dog lovers', value: 0.3 }
+                        ]
+                    },
+                    {
+                        name: 'Digital nomads',
+                        demographic: [
+                            { name: 'White', value: 0.6 },
+                            { name: 'Brazilian', value: 0.3 }
+                        ],
+                        keywords: [
+                            { name: 'Red Sox fans', value: 0.6 },
+                            { name: 'Dog lovers', value: 0.3 }
+                        ]
+                    }
+                ]
+                this.resultDatas = res.map(result => {
+                    this.otherValue(result.demographic)
+                    this.otherValue(result.keywords)
+                    return result
+                })
+            }
+        },
+        mounted() {
+            // 模拟执行了一次请求后
+            this.submit()
+        }
+    }
+    const app = Vue.createApp(App)
+    app.use(ElementPlus)
+    app.mount('#app')
+</script>
+</html>
