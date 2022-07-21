@@ -39,7 +39,9 @@ json format
 ``` json
 
 {
-    "message":[
+    "message":{
+        "graph": iframe_url
+        "sublist":[
         {
             "name": "Chicago",
             "value":
@@ -116,8 +118,8 @@ json format
                         }
                     ]
                 }
-        }
-    ]
+        }]
+    }
 }
 
 
