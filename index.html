@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CommuniTies</title>
-    <style>html, body { margin: 0; padding: 0; height: 100%; } html { min-width: 1200px; min-height: 600px; background-color: #e5e4e2; }</style>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        html {
+            min-width: 1200px;
+            min-height: 600px;
+            background-color: #e5e4e2;
+        }
+    </style>
     <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
     <style>
         .m-app {
             height: 100%;
         }
+
         .m-header {
             display: flex;
             align-items: center;
@@ -25,15 +40,18 @@
             font-size: 24px;
             box-sizing: border-box;
         }
+
         .m-header .f-logo {
             font-weight: bold;
         }
+
         .m-header .f-center {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
+
         .m-main {
             display: flex;
             flex-direction: column;
@@ -41,6 +59,7 @@
             height: 100%;
             box-sizing: border-box;
         }
+
         .m-form {
             flex: none;
             padding: 18px 18px 0;
@@ -48,63 +67,68 @@
             border: solid 0.5px #000;
             border-radius: 10px;
         }
+
         .m-form .el-select {
             flex: 1;
         }
+
         .m-result {
             flex: 1;
+            flex-shrink: 0;
             display: flex;
+            height: 0;
             margin-top: 24px;
         }
+
         .m-result .f-left {
             flex: 1;
         }
+
         .m-result .f-right {
             flex: none;
-            margin-left: 16px;
-            width: 500px;
+            margin-left: 24px;
+            width: 600px;
         }
+
         .m-result .m-part {
             display: flex;
             flex-direction: column;
         }
+
         .m-result .u-title {
             flex: none;
             margin-bottom: 16px;
             text-align: center;
             text-decoration: underline;
         }
+
         .m-result .m-content {
             flex: 1;
-        }
-        .m-result .m-content .u-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
             background: #fff;
-            border-radius: 10px;
         }
+
+        .m-result .m-content.f-iframe {
+            border: 0;
+            /* border-radius: 10px; */
+        }
+
+        .m-result .m-content.f-data {
+            padding: 16px;
+            overflow-y: auto;
+        }
+
         .m-result .m-result-item {
-            margin-bottom: 16px;
-            background: #fff;
-            border-radius: 10px;
-        }
-        .m-result .m-result-item .u-result-name {
-            padding: 16px;
-            border-bottom: solid 0.5px #eee;
-        }
-        .m-result .m-result-item .m-result-data {
-            padding: 16px;
-        }
-        .m-result .m-result-item .m-result-data-item {
             display: flex;
-            justify-content: space-between;
         }
-        .m-result .m-result-item .m-result-data-item .u-key {
-            color: #999;
+
+        .m-result .m-result-item .m-chart {
+            flex: 1;
+            height: 200px;
+            /* border: solid 1px #ccc; */
         }
     </style>
 </head>
+
 <body>
     <div id="app" class="m-app">
         <div class="m-header">
@@ -120,82 +144,48 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="Starting point">
-                            <el-select v-model="form.start">
-                                <el-option
-                                    v-for="item in startPoints"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value"
-                                />
-                            </el-select>
+                        <el-form-item label="Dates">
+                            <el-date-picker v-model="form.dates" type="daterange" range-separator="To"
+                                start-placeholder="Start date" end-placeholder="End date" />
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="Dates">
-                            <el-date-picker
-                            v-model="form.dates"
-                            type="daterange"
-                            range-separator="To"
-                            start-placeholder="Start date"
-                            end-placeholder="End date"
-                        />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
+                    <el-col :span="12">
                         <el-form-item label="Region">
                             <el-select v-model="form.region">
-                                <el-option
-                                    v-for="item in regions"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value"
-                                />
+                                <el-option v-for="item in regions" :key="item.value" :label="item.label"
+                                    :value="item.value" />
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="10">
                         <el-form-item label="Platforms">
                             <el-select v-model="form.platforms" multiple>
-                                <el-option
-                                    v-for="item in platforms"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value"
-                                />
+                                <el-option v-for="item in platforms" :key="item.value" :label="item.label"
+                                    :value="item.value" />
                             </el-select>
                         </el-form-item>
+                    </el-col>
+                    <el-col :span="2">
+                        <el-button type="primary" style="margin-left: 16px; width: calc(100% - 16px);">Query</el-button>
                     </el-col>
                 </el-row>
             </el-form>
             <div class="m-result">
                 <div class="m-part f-left">
                     <div class="u-title">Community Network</div>
-                    <div class="m-content">
-                        <div class="u-image"></div>
+                    <div class="m-content f-iframe">
                     </div>
                 </div>
                 <div class="m-part f-right">
                     <div class="u-title">Community Data</div>
-                    <div class="m-content">
-                        <div
-                            v-for="(result, i) in resultDatas"
-                            class="m-result-item"
-                        >
-                            <div class="u-result-name">{{result.name}}</div>
-                            <div class="m-result-data">
-                                <div class="m-result-data-item">
-                                    <div class="u-key">Demographic</div>
-                                    <div class="u-value">{{displayValue(result.demographic)}}</div>
-                                </div>
-                                <div class="m-result-data-item">
-                                    <div class="u-key">Keywords</div>
-                                    <div class="u-value">{{displayValue(result.keywords)}}</div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="m-content f-data">
+                        <el-collapse v-if="resultData && resultData.length" v-model="collapseActive" accordion @change="collapseChange">
+                            <el-collapse-item v-for="(sub, i) in resultData" :key="i" :title="sub.name" :name="i">
+                                <result-data :result="sub" :ref="setResultRef" />
+                            </el-collapse-item>
+                        </el-collapse>
                     </div>
                 </div>
             </div>
@@ -206,10 +196,11 @@
 <script src="https://unpkg.com/vue@next"></script>
 <script src="https://unpkg.com/element-plus"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js" integrity="sha256-oZEaXgWqxLmr12VzCK9eGOuHIi3XPZ/KsJXXFjtyvZA=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js"
+    integrity="sha256-oZEaXgWqxLmr12VzCK9eGOuHIi3XPZ/KsJXXFjtyvZA=" crossorigin="anonymous"></script>
 <script>
     const App = {
-        data () {
+        data() {
             return {
                 form: {
                     title: '',
@@ -229,86 +220,212 @@
                     { value: 2, label: 'Facebook' },
                     { value: 3, label: 'Twitter' },
                 ],
-                resultDatas: []
+                resultData: [],
+                collapseActive: 0,
+                resultRefs: []
             }
         },
         methods: {
-            toPercent (value) {
-                return (value * 100 || 0).toFixed(0) + '%'
-            },
-            otherValue (datas) {
-                let other = 1
-                datas.forEach(data => other -= data.value)
-                if (other > 0) {
-                    datas.push({ name: 'other', value: other})
+            setResultRef (el) {
+                if (el) {
+                    this.resultRefs.push(el)
                 }
             },
-            displayValue (datas)  {
-                return datas.map(data => `${data.name} ${this.toPercent(data.value)}`).join(', ')
+            collapseChange (val) {
+                if (val !== '') {
+                    this.$nextTick(() => {
+                        this.resultRefs[val].resize()
+                    })
+                }
             },
-            submit () {
+            submit() {
                 // axios提交请求到后端接口
                 // 模拟数据
-                const res = [
-                    {
-                        name: 'Out of towners',
-                        demographic: [
-                            { name: 'White', value: 0.6 },
-                            { name: 'Brazilian', value: 0.3 }
-                        ],
-                        keywords: [
-                            { name: 'Red Sox fans', value: 0.6 },
-                            { name: 'Dog lovers', value: 0.3 }
-                        ]
-                    },
-                    {
-                        name: 'Boston Business',
-                        demographic: [
-                            { name: 'White', value: 0.6 },
-                            { name: 'Brazilian', value: 0.3 }
-                        ],
-                        keywords: [
-                            { name: 'Red Sox fans', value: 0.6 },
-                            { name: 'Dog lovers', value: 0.3 }
-                        ]
-                    },
-                    {
-                        name: 'Boston Locals',
-                        demographic: [
-                            { name: 'White', value: 0.6 },
-                            { name: 'Brazilian', value: 0.3 }
-                        ],
-                        keywords: [
-                            { name: 'Red Sox fans', value: 0.6 },
-                            { name: 'Dog lovers', value: 0.3 }
-                        ]
-                    },
-                    {
-                        name: 'Digital nomads',
-                        demographic: [
-                            { name: 'White', value: 0.6 },
-                            { name: 'Brazilian', value: 0.3 }
-                        ],
-                        keywords: [
-                            { name: 'Red Sox fans', value: 0.6 },
-                            { name: 'Dog lovers', value: 0.3 }
+                const res = {
+                    "message": {
+                        "graph": 'iframe_url',
+                        "sublist": [
+                            {
+                                "name": "Chicago",
+                                "emotion": [
+                                    {
+                                        "name": "possitive",
+                                        "value": 0.2
+                                    },
+                                    {
+                                        "name": "neutral",
+                                        "value": 0.2
+                                    },
+                                    {
+                                        "name": "negative",
+                                        "value": 0.6
+                                    }
+                                ],
+                                "activities": [
+                                    {
+                                        "name": "hate_speech",
+                                        "value": 0.3
+                                    },
+                                    {
+                                        "name": "misinfomation",
+                                        "value": 0.5
+                                    },
+                                    {
+                                        "name": "fake_activity1",
+                                        "value": 0.6
+                                    },
+                                    {
+                                        "name": "fake_activity2",
+                                        "value": 0.1
+                                    }
+                                ]
+
+                            },
+                            {
+                                "name": "Beijing",
+                                "emotion": [
+                                    {
+                                        "name": "possitive",
+                                        "value": 0.6
+                                    },
+                                    {
+                                        "name": "neutral",
+                                        "value": 0.2
+                                    },
+                                    {
+                                        "name": "negative",
+                                        "value": 0.2
+                                    }
+                                ],
+                                "activities": [
+                                    {
+                                        "name": "hate_speech",
+                                        "value": 0.3
+                                    },
+                                    {
+                                        "name": "misinfomation",
+                                        "value": 0.5
+                                    },
+                                    {
+                                        "name": "fake_activity1",
+                                        "value": 0.6
+                                    },
+                                    {
+                                        "name": "fake_activity2",
+                                        "value": 0.1
+                                    }
+                                ]
+                            }
                         ]
                     }
-                ]
-                this.resultDatas = res.map(result => {
-                    this.otherValue(result.demographic)
-                    this.otherValue(result.keywords)
-                    return result
-                })
+                }
+                this.resultData = res.message.sublist
             }
         },
         mounted() {
             // 模拟执行了一次请求后
             this.submit()
-        }
+        },
+        beforeUpdate() {
+            this.resultRefs = []
+        },
+        // updated () {
+        //     console.log(this.resultRefs)
+        // }
     }
+
     const app = Vue.createApp(App)
+
+    app.component('result-data', {
+        template: `<div class="m-result-item"><div class="m-chart" ref="emotionChartEl"></div><div class="m-chart" ref="activitiesChartEl" style="margin-left: 16px;"></div></div>`,
+        props: ['result'],
+        data () {
+            return {
+                emotionChart: {},
+                activitiesChart: {}
+            }
+        },
+        methods: {
+            resize () {
+                this.emotionChart.resize()
+                this.activitiesChart.resize()
+            }
+        },
+        mounted() {
+            this.emotionChart = Vue.markRaw(echarts.init(this.$refs.emotionChartEl))
+            this.emotionChart.setOption({
+                title: {
+                    text: 'Emotion',
+                    left: 'center'
+                },
+                series: [
+                    {
+                        type: 'pie',
+                        top: '10%',
+                        radius: ['30%', '90%'],
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 10,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        label: {
+                            position: 'inside',
+                            formatter: "{b}\n\n{d}%"
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: this.result.emotion
+                    }
+                ]
+            })
+            const activitiesName = []
+            const activitiesData = []
+            this.result.activities.forEach(item => {
+                activitiesName.push(item.name)
+                activitiesData.push(item.value)
+            })
+            this.activitiesChart = Vue.markRaw(echarts.init(this.$refs.activitiesChartEl))
+            this.activitiesChart.setOption({
+                title: {
+                    text: 'Activities',
+                    left: 'center'
+                },
+                grid: {
+                    containLabel: true,
+                    top: '25%',
+                    left: 0,
+                    bottom: 0
+                },
+                xAxis: {
+                    show: false,
+                    axisLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        show: true,
+                        interval: 0,
+                        hideOverlap: false
+                    }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: activitiesName
+                },
+                series: [
+                    {
+                        type: 'bar',
+                        colorBy: 'data',
+                        data: activitiesData
+                    }
+                ]
+            })
+        }
+    })
+
     app.use(ElementPlus)
     app.mount('#app')
 </script>
+
 </html>
