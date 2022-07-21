@@ -35,6 +35,92 @@ return:
                     - fake_name1 : 0.2
                     - fake_name2 : 0.6
 
+json format
+``` json
 
+{
+    "message":[
+        {
+            "name": "Chicago",
+            "value":
+                {
+                    "emotion": [
+                        {
+                            "name": "possitive",
+                            "value": 0.2
+                        },
+                        {
+                            "name": "neutral",
+                            "value": 0.2
+                        },
+                        {
+                            "name": "negative",
+                            "value": 0.6
+                        }
+                    ],
+                    "activities":[
+                        {
+                            "name": "hate_speech",
+                            "value": 0.3
+                        },
+                        {
+                            "name": "misinfomation",
+                            "value": 0.5
+                        },
+                        {
+                            "name": "fake_activity1",
+                            "value": 0.6
+                        },
+                        {
+                            "name": "fake_activity2",
+                            "value": 0.1
+                        }
+                    ]
+                }
+            
+        },
+        {
+            "name": "Beijing",
+            "value":
+                {
+                    "emotion": [
+                        {
+                            "name": "possitive",
+                            "value": 0.6
+                        },
+                        {
+                            "name": "neutral",
+                            "value": 0.2
+                        },
+                        {
+                            "name": "negative",
+                            "value": 0.2
+                        }
+                    ],
+                    "activities":[
+                        {
+                            "name": "hate_speech",
+                            "value": 0.3
+                        },
+                        {
+                            "name": "misinfomation",
+                            "value": 0.5
+                        },
+                        {
+                            "name": "fake_activity1",
+                            "value": 0.6
+                        },
+                        {
+                            "name": "fake_activity2",
+                            "value": 0.1
+                        }
+                    ]
+                }
+        }
+    ]
+}
+
+
+```
 
 
