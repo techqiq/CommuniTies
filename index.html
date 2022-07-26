@@ -175,16 +175,16 @@
             <div class="m-result">
                 <div class="m-part f-left">
                     <div class="u-title">Community Network</div>
-                    <div class="m-content f-iframe">
-                        <!-- <iframe width="1000" height="600" src={{graph}}></iframe> -->
-
-                    </div>
+                    <iframe class="m-content f-iframe" :src="resultGraph">
+                    </iframe>
                 </div>
                 <div class="m-part f-right">
                     <div class="u-title">Community Data</div>
                     <div class="m-content f-data">
                         <el-collapse v-if="resultData && resultData.length" v-model="collapseActive" accordion @change="collapseChange">
                             <el-collapse-item v-for="(sub, i) in resultData" :key="i" :title="sub.name" :name="i">
+                                <div class="u-result-name">Number of posts: {{sub.post_num}}</div>
+                                <div class="u-result-name">Time interval of posts: {{sub.time_interval && sub.time_interval.join(" ~ ")}}</div>
                                 <result-data :result="sub" :ref="setResultRef" />
                             </el-collapse-item>
                         </el-collapse>
@@ -238,6 +238,11 @@
                     })
                 }
             },
+            displayValue (data)  {
+                return data.join(' ~ ')
+            },
+
+            
 
 
             // async submit () {
@@ -257,20 +262,13 @@
                 const res = 
                             {
                                 "message":{
-                                    "graph": "iframe_url",
+                                    "graph": "https://hub.graphistry.com/graph/graph.html?dataset=3bd7e1294d9f4dc5885a903ee606ef70&type=arrow&viztoken=7fdf4b69-8dcd-4787-9e69-749722261519&usertag=7148a415-pygraphistry-0.25.1&splashAfter=1658433749&info=true&menu=False",
                                     "sublist":[
                                     {
-                                        "name": "Chicago",
+                                        "name": "chicagofood",
                                         "post_num": 50,
-                                        "time_line": [
+                                        "time_interval": [
                                             '27/3/2022 00:00:00',
-                                            '26/3/2022 00:00:00',
-                                            '25/3/2022 00:00:00',
-                                            '2/4/2022 00:00:00',
-                                            '24/3/2022 00:00:00',
-                                            '24/4/2022 00:00:00',
-                                            '24/3/2022 00:00:00',
-                                            '24/3/2022 00:00:00',
                                             '26/3/2022 00:00:00'
                                             ],
                                         "emotion": [
@@ -290,24 +288,24 @@
                                         "activities":[
                                             {
                                                 "name": "hate_speech",
-                                                "value": 0.0003
+                                                "value": 0.9999
                                             },
                                             {
                                                 "name": "misinfomation",
-                                                "value": 0.0001
+                                                "value": 0.50
                                             },
                                             {
                                                 "name": "fake_activity1",
-                                                "value": 0.0001
+                                                "value": 0.00
                                             },
                                             {
                                                 "name": "fake_activity2",
-                                                "value": 0.0001
+                                                "value": 0.00
                                             }
                                         ]
                                     },
                                     {
-                                        "name": "Beijing",
+                                        "name": "LockDownSkepticism",
                                         "post_num": 10,
                                         "time_line": [
                                             '1/3/2022 00:00:00',
@@ -330,25 +328,26 @@
                                         "activities":[
                                             {
                                                 "name": "hate_speech",
-                                                "value": 0.3
+                                                "value": 0.9003
                                             },
                                             {
                                                 "name": "misinfomation",
-                                                "value": 0.5
+                                                "value": 0.0005
                                             },
                                             {
                                                 "name": "fake_activity1",
-                                                "value": 0.6
+                                                "value": 0.0001
                                             },
                                             {
                                                 "name": "fake_activity2",
-                                                "value": 0.1
+                                                "value": 0.0001
                                             }
                                         ]
                                     }]
                                 }
                             }
                             this.resultData = res.message.sublist
+                            //this.resultGraph = res.message.graph
                 
             }
         },
@@ -449,7 +448,7 @@
                         colorBy: 'data',
                         label: {
                             show: true,
-                            position: 'inside'
+                            position: 'outside'
                         },
                         data: activitiesData
                     }
