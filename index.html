@@ -184,7 +184,6 @@
                         <el-collapse v-if="resultData && resultData.length" v-model="collapseActive" accordion @change="collapseChange">
                             <el-collapse-item v-for="(sub, i) in resultData" :key="i" :title="sub.name" :name="i">
                                 <div class="u-result-name">Number of posts: {{sub.post_num}}</div>
-                                <div class="u-result-name">Time interval of posts: {{sub.time_interval && sub.time_interval.join(" ~ ")}}</div>
                                 <result-data :result="sub" :ref="setResultRef" />
                             </el-collapse-item>
                         </el-collapse>
@@ -222,7 +221,8 @@
                 ],
                 resultData: [],
                 collapseActive: 0,
-                resultRefs: []
+                resultRefs: [],
+                resultGraph: ''
             }
         },
         methods: {
@@ -268,9 +268,16 @@
                                         "name": "chicagofood",
                                         "post_num": 50,
                                         "time_interval": [
-                                            '27/3/2022 00:00:00',
-                                            '26/3/2022 00:00:00'
-                                            ],
+                                            '2022-3-28',
+                                            '2022-3-27',
+                                            '2022-3-27',
+                                            '2022-3-26',
+                                            '2022-3-26',
+                                            '2022-3-26',
+                                            '2022-3-23',
+                                            '2022-3-21',
+                                            '2022-3-21'
+                                        ],
                                         "emotion": [
                                             {
                                                 "name": "possitive",
@@ -307,10 +314,17 @@
                                     {
                                         "name": "LockDownSkepticism",
                                         "post_num": 10,
-                                        "time_line": [
-                                            '1/3/2022 00:00:00',
-                                            '6/3/2022 00:00:00'
-                                            ],
+                                        "time_interval": [
+                                            '2022-3-28',
+                                            '2022-3-27',
+                                            '2022-3-27',
+                                            '2022-3-26',
+                                            '2022-3-26',
+                                            '2022-3-26',
+                                            '2022-3-23',
+                                            '2022-3-21',
+                                            '2022-3-21'
+                                        ],
                                         "emotion": [
                                             {
                                                 "name": "possitive",
@@ -347,7 +361,7 @@
                                 }
                             }
                             this.resultData = res.message.sublist
-                            //this.resultGraph = res.message.graph
+                            this.resultGraph = res.message.graph
                 
             }
         },
@@ -366,18 +380,20 @@
     const app = Vue.createApp(App)
 
     app.component('result-data', {
-        template: `<div class="m-result-item"><div class="m-chart" ref="emotionChartEl"></div><div class="m-chart" ref="activitiesChartEl" style="margin-left: 16px;"></div></div>`,
+        template: `<div><div ref="timelineChartEl" style="margin: 8px 0; width: 100%; height: 200px;"></div><div class="m-result-item"><div class="m-chart" ref="emotionChartEl"></div><div class="m-chart" ref="activitiesChartEl" style="margin-left: 16px;"></div></div></div>`,
         props: ['result'],
         data () {
             return {
                 emotionChart: {},
-                activitiesChart: {}
+                activitiesChart: {},
+                timelineChart: {}
             }
         },
         methods: {
             resize () {
                 this.emotionChart.resize()
                 this.activitiesChart.resize()
+                this.timelineChart.resize()
             }
         },
         mounted() {
@@ -428,8 +444,15 @@
                     bottom: 0
                 },
                 xAxis: {
-                    show: false,
+                    show: false
+                },
+                yAxis: {
+                    type: 'category',
+                    data: activitiesName,
                     axisLine: {
+                        show: false
+                    },
+                    axisTick: {
                         show: false
                     },
                     axisLabel: {
@@ -438,22 +461,75 @@
                         hideOverlap: false
                     }
                 },
-                yAxis: {
-                    type: 'category',
-                    data: activitiesName
-                },
                 series: [
                     {
                         type: 'bar',
                         colorBy: 'data',
                         label: {
                             show: true,
-                            position: 'outside'
+                            position: 'right'
                         },
                         data: activitiesData
                     }
                 ]
             })
+            if (this.result.time_interval && this.result.time_interval.length) {
+                const time_interval = this.result.time_interval.map(item => new Date(item).getTime())
+                let min = Math.min.apply(Math, time_interval)
+                let max = Math.max.apply(Math, time_interval)
+                const dateMap = new Map()
+                for (let date = min; date <= max; date += 86400000) {
+                    dateMap.set(date, 0)
+                }
+                time_interval.forEach(date => {
+                    dateMap.set(date, dateMap.get(date) + 1)
+                })
+                const dates = []
+                const dateValue = []
+                dateMap.forEach((count, date) => {
+                    const d = new Date(date)
+                    dates.push(`${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`)
+                    dateValue.push(count)
+                })
+                console.log(dates)
+                this.timelineChart = Vue.markRaw(echarts.init(this.$refs.timelineChartEl))
+                this.timelineChart.setOption({
+                    title: {
+                        text: 'time_interval',
+                        left: 'center'
+                    },
+                    grid: {
+                        containLabel: true,
+                        top: '25%',
+                        left: '1%',
+                        right: '1%',
+                        bottom: 0
+                    },
+                    yAxis: {
+                        show: false
+                    },
+                    xAxis: {
+                        type: 'category',
+                        axisLabel: {
+                            show: true,
+                            interval: 0,
+                            hideOverlap: false
+                        },
+                        data: dates
+                    },
+                    series: [
+                        {
+                            type: 'bar',
+                            colorBy: 'data',
+                            label: {
+                                show: true,
+                                position: 'top'
+                            },
+                            data: dateValue
+                        }
+                    ]
+                })
+            }
         }
     })
 
